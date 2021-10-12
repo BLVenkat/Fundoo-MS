@@ -7,13 +7,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundoonotes.dto.NoteDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
+import com.bridgelabz.fundoonotes.entity.NoteImage;
 import com.bridgelabz.fundoonotes.entity.User;
 import com.bridgelabz.fundoonotes.exception.FundooException;
+import com.bridgelabz.fundoonotes.repository.NoteImageRepository;
 import com.bridgelabz.fundoonotes.repository.NoteRepository;
 import com.bridgelabz.fundoonotes.repository.UserRepository;
+import com.bridgelabz.fundoonotes.utils.S3service;
 import com.bridgelabz.fundoonotes.utils.TokenService;
 
 @Service
@@ -27,6 +31,12 @@ public class NoteServiceImp implements NoteService {
 
 	@Autowired
 	private NoteRepository noteRepository;
+	
+	@Autowired
+	private S3service s3Service;
+	
+	@Autowired
+	private NoteImageRepository noteImageRepository;
 
 	@Override
 	public Note createNote(NoteDTO noteDTO, String token) {
@@ -119,6 +129,18 @@ public class NoteServiceImp implements NoteService {
 		
 		 return user.getNotes().stream().filter(note -> note.getId().equals(noteId)).findAny()
 				.orElseThrow(() -> new FundooException(HttpStatus.NOT_FOUND.value(), "Note not found"));
+	}
+
+	@Override
+	public NoteImage addImage(String token, MultipartFile file, Long noteId) {
+		Note note = getNote(token, noteId);
+		String url =s3Service.fileUpload(file, "note_images", note.getId().toString());
+		NoteImage noteImage = new NoteImage();
+		noteImage.setUrl(url);
+		NoteImage savedNote = noteImageRepository.save(noteImage);
+		note.getNoteImage().add(savedNote);
+		noteRepository.save(note);
+		return savedNote;
 	}
 
 }

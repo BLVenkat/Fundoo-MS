@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundoonotes.dto.NoteDTO;
 import com.bridgelabz.fundoonotes.entity.Note;
+import com.bridgelabz.fundoonotes.entity.NoteImage;
 import com.bridgelabz.fundoonotes.response.Response;
 import com.bridgelabz.fundoonotes.service.NoteService;
 
@@ -29,6 +32,7 @@ public class NoteController {
 
 	@Autowired
 	private NoteService noteService;
+	
 	
 	@PostMapping
 	public ResponseEntity<Response> createNote(@RequestHeader String token,@Valid @RequestBody NoteDTO noteDTO, BindingResult result){
@@ -76,5 +80,13 @@ public class NoteController {
 	public ResponseEntity<Response> deleteNote(@RequestHeader String token,@PathVariable Long noteId){	
 	Note note = noteService.deleteNote(token, noteId);
 		return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), "Note deleted Successfully", note),HttpStatus.OK);	
+	}
+	
+	@PostMapping("/image/{noteId}")
+	public ResponseEntity<Response> uploadNoteImage(@RequestHeader String token,@PathVariable Long noteId,@RequestParam MultipartFile file){
+		NoteImage noteImage = noteService.addImage(token, file, noteId);
+		
+		return new ResponseEntity<Response>(new Response(HttpStatus.OK.value(), "Image added to note Successfully", noteImage),HttpStatus.OK);	
+
 	}
 }

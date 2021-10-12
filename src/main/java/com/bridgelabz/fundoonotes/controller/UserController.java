@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.bridgelabz.fundoonotes.dto.LoginDTO;
 import com.bridgelabz.fundoonotes.dto.UpdatePasswordDTO;
@@ -97,5 +98,13 @@ public class UserController {
 				new Response(HttpStatus.OK.value(), "password updated Successfully", ""), HttpStatus.OK);
 
 	}
-	
+
+	@PostMapping("/profile-pic")
+	public ResponseEntity<Response> profilePic(@RequestHeader String token, @RequestParam MultipartFile file){
+		String url = userService.uploadProfilePic(token, file);
+		return new ResponseEntity<Response>(
+				new Response(HttpStatus.OK.value(), "Profile Image Uploaded Successfully", url), HttpStatus.OK);
+
+	}
+
 }

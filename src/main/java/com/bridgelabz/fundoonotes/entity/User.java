@@ -54,5 +54,11 @@ public class User {
 	@OneToMany(targetEntity = Note.class)
 	@JoinColumn(name = "user_id")
 	private List<Note> notes;
+	
+	@OneToMany(targetEntity = Label.class)
+	@JoinColumn(name = "user_id")
+	private List<Label> labels;
+
+	
 }
 

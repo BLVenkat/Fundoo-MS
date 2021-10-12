@@ -2,6 +2,8 @@ package com.bridgelabz.fundoonotes.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.bridgelabz.fundoonotes.dto.LoginDTO;
 import com.bridgelabz.fundoonotes.dto.UpdatePasswordDTO;
 import com.bridgelabz.fundoonotes.dto.UserDTO;
@@ -22,4 +24,6 @@ public interface UserService {
 	public List<User> getAllUsers();
 	
 	public void updatePassword(String token,UpdatePasswordDTO updatePasswordDTO);
+	
+	public String uploadProfilePic(String token, MultipartFile file);
 }
